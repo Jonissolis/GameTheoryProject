@@ -1,0 +1,47 @@
+axl.graph.Graph()
+Construction: Graph(edges=None, directed=False)
+Edges are supplied as a list of immutable python objects such as tuples. Default setting for direction in the graph is suitable for this project and need not be considered further.
+
+Methods:
+Most methods involve manipulating the graph post-creation. This will most likely not be of use.
+edges() - returns list of edges
+vertices() - returns list of nodes
+out_vertices(node) and in_vertices(node) - returns list of outgoing/incoming, connected nodes. Identical for undirected graphs such as ours.
+
+Summary: the graph object will most likely only be useful as a means of using the graph feature in the Moran process. The intricacies of graphs will be handled elsewhere.
+
+axl.Player()
+Abstract class used to construct different strategies. Not of interest compared to directly looking at different strategies.
+
+axl.MoranProcess()
+Construction: MoranProcess(
+	players: List[Player],
+	turns: int = DEFAULT_TURNS,
+              prob_end: float = None,
+            	noise: float = 0,
+              game: Game = None,
+              deterministic_cache: DeterministicCache = None,
+              mutation_rate: float = 0., mode: str = 'bd',
+              interaction_graph: Graph = None,
+              reproduction_graph: Graph = None)
+
+Given a graph, the process will only involve the neighbours of any given node according to the graph.
+Reproduction will also be limited to the neighbours of the node, containing a player about to be cloned.
+Mutation is possible. If mutation occurs a player will change stragies to one randomly chosen from the initial collection of strategies. Mutation will cause the process to never terminate.
+Selection (reproduction) is carried out via roulette-wheel selection, i.e. probability of being chosen for reproduction is your score as a fraction of total score.
+
+Notable parameters:
+players: list of initial players
+turns: number of turns in each pairwise match. Default value is 200.
+noise: randomly flips a player's choice according to supplied noise value.
+mode: death-birth or birth-death mode. death-birth mode replaces randomly chosen player. Birth-death mode first determines player to clone and then chooses player to replace locally. B-D is default and is preferable due to local behaviour, not global.
+interaction_graph: limit possible matches according to graph.
+
+Notable methods:
+play(): plays game until fixation, i.e. only one strategy remains.
+populations_plot(): presents history of population distributions over iterations.
+population_distribution(): returns a Counter object, which contains information on number of each player in existence.
+players: a list containing the players and their positions on a node as order in list. MoranProcess object does not keep a history of this. Only most recent state remains, unlike the population_distribution.
+
+Summary: in BD-mode the choice of who gets replaced is made random but locally. The number of turns should perhaps be tweaked to save time, 200 turns per match may not necessarily always produce novel results. The play()-method runs until fixation which may take a very long time for any given network topology. I recommend that we instead iterate the Moran process according to a pre-determined number of turns.
+In our case, the MoranProcess object need only be created with the following in mind: players, turns, graph.
