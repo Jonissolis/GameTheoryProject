@@ -1,0 +1,3 @@
+Approximate Moran Process does not calculate the matches between players but rather takes expected outcome from a table of cached results.
+While this may certainly speed things up it will be a sore point during analysis and does not allow for noise.
+To speed up the run-time of simulations I recommend that we do not use the mp.play() method, which will play until fixation, but rather settle on a number of iterations to carry out. Another potential speed-up is to adapt the number of turns in each match. Default value is 200, but is 200 really necessary to produce dependable results? If nothing else, low turn count can be used for preliminary runs.
