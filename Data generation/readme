@@ -1,0 +1,4 @@
+This directory will contain .py-files that generate the data that will be used for the report.
+'graphdatageneric.py' will serve as a template. To run, it requires the following: 1. a graph object from networkx, 2. A list of strategy objects from which to pick when generating players, 3. The number of turns to play in any given match, 4. Noise level, if any, 5. Max number of iterations. The loop will abort if fixation occurs before reaching max iterations. Optionally: the scoring rules can also be changed.
+
+The goal is to have one .py-file for each network investigated. For a network-specific file, the program should be able to run without any changes necessary.
