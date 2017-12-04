@@ -3,18 +3,21 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import random as rand
 from collections import Counter
+from copy import copy
 
 def ResultsFromCounter(cntrobj):
     valtot = sum(cntrobj.values())
     return "".join(['$|'] + [str(ind)[0] + ':' + "{0:.2f}".format(cntrobj[str(ind)]/valtot) + '|' for ind in strategy_pool] + ['$'])
 
 filename = None ### INSERT FILENAME AS STRING
+make_plots = False
 
 # Generate graph
 plt.close('all')
 x_graph = None ### INSERT NETWORKX GRAPH OBJECT HERE
-plt.subplots()
-nx.draw(x_graph, with_labels=True)
+if make_plots:
+    plt.subplots()
+    nx.draw(x_graph, with_labels=True)
 
 # Network Analysis
 x_degree = x_graph.degree() # Number of edges for each node
@@ -83,13 +86,16 @@ for _ in range(experiment_repetitions):
             break
     
     # Prepare for next experiment
+    if make_plots:
+        saved_mp = copy(mp)
     experiments.append(mp.population_distribution())
     initial_players = [rand.choice(strategy_pool).clone() for _ in range(number_of_nodes)]
     mp.initial_players = initial_players
     mp.reset()
 
 # Show results
-mp.populations_plot()
+if make_plots:
+    saved_mp.populations_plot()
 
 # Write results to file
 networkstring = 'Degree: ' + str(x_degree) + '. Description: ' + 'Number of edges for each node' + '\n' +\
