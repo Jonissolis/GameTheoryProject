@@ -8,6 +8,8 @@ def ResultsFromCounter(cntrobj):
     valtot = sum(cntrobj.values())
     return "".join(['$|'] + [str(ind)[0] + ':' + "{0:.2f}".format(cntrobj[str(ind)]/valtot) + '|' for ind in strategy_pool] + ['$'])
 
+filename = None ### INSERT FILENAME AS STRING
+
 # Generate graph
 plt.close('all')
 x_graph = None ### INSERT NETWORKX GRAPH OBJECT HERE
@@ -108,7 +110,6 @@ avgrestot = sum(avgres.values())
 avgexp = "\\begin{tabular}{c}" + "\\\\".join(["".join([str(round(100*avgres[key]/avgrestot))] + ["\% "] + [key]) for key in avgres.keys()]) + "\\end{tabular}"
 tablestring = initstratsstring + '&$' + gamerulesstring + '$&$' + str(noise_level) + '$&' + avgexp + '\\'*2 + '\n'
 
-filename = 'THISISTHETESTFILE'
 with open(filename + '.txt', 'w') as file:
     file.write(networkstring)
     file.write('\n\n')
