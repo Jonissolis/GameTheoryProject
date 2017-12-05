@@ -4,11 +4,27 @@ import matplotlib.pyplot as plt
 import random as rand
 from collections import Counter
 from copy import copy
+#To make it pretty
+import matplotlib.pyplot as plt
+import matplotlib
+import pylab as pl
+matplotlib.style.use('seaborn-colorblind')
+font = {'size' : 14}
+matplotlib.rc('font', **font)
 
 def ResultsFromCounter(cntrobj):
     valtot = sum(cntrobj.values())
     return "".join(['$|'] + [str(ind)[0] + ':' + "{0:.2f}".format(cntrobj[str(ind)]/valtot) + '|' for ind in strategy_pool] + ['$'])
 
+def network_visualization(x_graph,filename,initial_players,player_colors):
+    fig, ax = plt.subplots(figsize=(7,7))
+    d = dict(nx.degree(x_graph))
+    node_number = len(d)
+    pos = nx.spring_layout(x_graph)
+    nx.draw(x_graph, pos, node_size = [v / node_number *500 for v in d.values()], node_color = [player_colors[str(v)] for v in initial_players], edge_color = 'darkgray', width=0.3, alpha=0.3, arrows=False)
+    plt.savefig(filename+'.png', dpi=900)
+    plt.show()
+    
 filename = 'albert_barabasi_data_p=0.05'
 make_plots = False
 generate_new_graph = False
@@ -41,6 +57,10 @@ x_diameter = nx.diameter(x_graph) # Max eccentricity or max possible distance be
 number_of_nodes = len(x_graph.nodes())
 strategy_pool = [axl.Cooperator(), axl.Defector(), axl.TitForTat()]
 initial_players = [rand.choice(strategy_pool).clone() for _ in range(number_of_nodes)]
+
+# Visualization of generated network
+player_colors = {str(strategy_pool[0]):'darkgreen', str(strategy_pool[1]):'darkred',str(strategy_pool[2]):'darkblue'}
+network_visualization(x_graph,filename,initial_players,player_colors)
 
 # Initialize game
 number_of_turns = 50
