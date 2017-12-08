@@ -9,6 +9,15 @@ def ResultsFromCounter(cntrobj):
     valtot = sum(cntrobj.values())
     return "".join(['$|'] + [str(ind)[0] + ':' + "{0:.2f}".format(cntrobj[str(ind)]/valtot) + '|' for ind in strategy_pool] + ['$'])
 
+def network_visualization(x_graph, filename, initial_players, player_colors):
+    fig, ax = plt.subplots(figsize=(7,7))
+    d = dict(nx.degree(x_graph))
+    node_number = len(d)
+    pos = nx.spring_layout(x_graph)
+    nx.draw(x_graph, pos, node_size = [v / node_number *500 for v in d.values()], node_color = [player_colors[str(v)] for v in initial_players], edge_color = 'darkgray', width=0.3, alpha=0.3, arrows=False)
+    plt.savefig(filename+'.png', dpi=900)
+    plt.show()
+
 filename = None ### INSERT FILENAME AS STRING
 make_plots = False
 
@@ -34,6 +43,11 @@ x_diameter = nx.diameter(x_graph) # Max eccentricity or max possible distance be
 number_of_nodes = len(x_graph.nodes())
 strategy_pool = [] ### FILL LIST WITH STRATEGIES TO BE SELECTED FROM
 initial_players = [rand.choice(strategy_pool).clone() for _ in range(number_of_nodes)]
+
+# Make Pretty Picture
+if make_plots:
+    player_colors = {str(axl.Cooperator()):"black", str(axl.Defector()):"black", str(axl.TitForTat()):"black"} ### SET DICTIONARY FOR COLORS, KEY = STRATEGY STRING, VALUE = COLOR STRING
+    network_visualization(x_graph, "", initial_players, player_colors) ### INSERT FILENAME (STRING)
 
 # Initialize game
 number_of_turns = None ### INSERT NUMBER OF TURNS TO PLAY

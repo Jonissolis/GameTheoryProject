@@ -9,16 +9,22 @@ def ResultsFromCounter(cntrobj):
     valtot = sum(cntrobj.values())
     return "".join(['$|'] + [str(ind)[0] + ':' + "{0:.2f}".format(cntrobj[str(ind)]/valtot) + '|' for ind in strategy_pool] + ['$'])
 
+def network_visualization(x_graph, filename, initial_players, player_colors):
+    fig, ax = plt.subplots(figsize=(7,7))
+    d = dict(nx.degree(x_graph))
+    node_number = len(d)
+    pos = nx.circular_layout(x_graph)
+    nx.draw(x_graph, pos, node_size = [v / node_number *500 for v in d.values()], node_color = [player_colors[str(v)] for v in initial_players], edge_color = 'darkgray', width=0.3, alpha=0.3, arrows=False)
+    plt.savefig(filename+'.png', dpi=900)
+    plt.show()
+
 filename = "fully_connected_data"
-make_plots = False
+make_plots = True
 
 # Generate graph
 plt.close('all')
-number_of_nodes = 100
+number_of_nodes = 80
 x_graph = nx.complete_graph(number_of_nodes)
-if make_plots:
-    plt.subplots()
-    nx.draw(x_graph, with_labels=True)
 
 # Network Analysis
 x_degree = x_graph.degree() # Number of edges for each node
@@ -36,6 +42,11 @@ number_of_nodes = len(x_graph.nodes())
 strategy_pool = [axl.Cooperator(), axl.Defector(), axl.TitForTat()]
 initial_players = [rand.choice(strategy_pool).clone() for _ in range(number_of_nodes)]
 
+# Make Pretty Picture
+if make_plots:
+    player_colors = {str(axl.Cooperator()):"black", str(axl.Defector()):"black", str(axl.TitForTat()):"black"}
+    network_visualization(x_graph, "FullyConnectedGraph", initial_players, player_colors)
+
 # Initialize game
 number_of_turns = 50
 noise_level = 0
@@ -49,9 +60,9 @@ mp = axl.MoranProcess(initial_players,
                       interaction_graph=axelrod_graph)
 
 # Iterate the population
-max_iterations = 10000
-selection_probability = 0.2
-experiment_repetitions = 10
+max_iterations = 5000
+selection_probability = 1
+experiment_repetitions = 1
 experiments = []
 
 for _ in range(experiment_repetitions):
@@ -97,6 +108,7 @@ for _ in range(experiment_repetitions):
 # Show results
 if make_plots:
     saved_mp.populations_plot()
+    plt.title('')
 
 # Write results to file
 networkstring = 'Degree: ' + str(x_degree) + '. Description: ' + 'Number of edges for each node' + '\n' +\
